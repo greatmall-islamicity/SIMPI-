@@ -1028,6 +1028,24 @@
   ],
   "auditLogs": [
     {
+      "id": "AUD-31895",
+      "timestamp": "04.13.51 WIB",
+      "actor": "Ir. Ahmad Fauzan, M.M.",
+      "role": "SUPER_ADMIN",
+      "action": "Pembaruan Target KPI Bulanan (30 pemakaman, efisiensi 95%)",
+      "target": "KPI-TARGETS",
+      "encryptionStatus": "AES-256-GCM"
+    },
+    {
+      "id": "AUD-31874",
+      "timestamp": "04.13.51 WIB",
+      "actor": "Ir. Ahmad Fauzan, M.M.",
+      "role": "SUPER_ADMIN",
+      "action": "Pembaruan Target KPI Bulanan (32 pemakaman, efisiensi 96.5%)",
+      "target": "KPI-TARGETS",
+      "encryptionStatus": "AES-256-GCM"
+    },
+    {
       "id": "AUD-21157",
       "timestamp": "03.38.41 WIB",
       "actor": "Ir. Ahmad Fauzan, M.M.",
@@ -1106,5 +1124,12 @@
       "lastUsed": "2026-11-19 08:16 WIB",
       "active": true
     }
-  ]
+  ],
+  "kpiTargets": {
+    "monthlyBurialTarget": 30,
+    "monthlyBookingTarget": 26,
+    "serviceEfficiencyTargetPct": 95,
+    "monthlyRevenueTargetIdr": 165000000,
+    "updatedAt": "2026-11-22 04.13 WIB"
+  }
 }

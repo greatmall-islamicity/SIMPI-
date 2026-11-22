@@ -4,6 +4,7 @@ import {
   CurrencyCode,
   FinancialTransaction,
   FuneralCase,
+  KpiTargets,
   Language,
   LayoutDensity,
   NavSection,
@@ -202,6 +203,18 @@ export default function App() {
     }
   };
 
+  const handleUpdateKpiTargets = async (next: Omit<KpiTargets, 'updatedAt'>) => {
+    const res = await fetch('/api/v1/kpi-targets', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(next),
+    });
+    if (res.ok) {
+      await fetchSnapshot();
+      showToast('Target KPI bulanan berhasil disimpan & grafik perbandingan diperbarui.');
+    }
+  };
+
   const handleAuditExport = async (payload: {
     module: string;
     format: 'PDF' | 'CSV';
@@ -296,6 +309,7 @@ export default function App() {
               searchQuery={searchQuery}
               onNavigate={setActiveSection}
               onAdvanceStage={(id, stage) => handleAdvanceStage(id, stage)}
+              onUpdateKpiTargets={handleUpdateKpiTargets}
             />
           )}
 

@@ -178,6 +178,14 @@ export interface ApiKeyRecord {
   active: boolean;
 }
 
+export interface KpiTargets {
+  monthlyBurialTarget: number;
+  monthlyBookingTarget: number;
+  serviceEfficiencyTargetPct: number;
+  monthlyRevenueTargetIdr: number;
+  updatedAt: string;
+}
+
 export interface SimpiDataSnapshot {
   plots: CemeteryPlot[];
   cases: FuneralCase[];
@@ -189,4 +197,5 @@ export interface SimpiDataSnapshot {
   auditLogs: AuditLogEntry[];
   chatMessages: ChatMessage[];
   apiKeys: ApiKeyRecord[];
+  kpiTargets: KpiTargets;
 }

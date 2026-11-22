@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import {
   CurrencyCode,
+  KpiTargets,
   Language,
   NavSection,
   PlotStatus,
@@ -19,6 +20,7 @@ import {
 import { TRANSLATIONS } from '../i18n/translations';
 import { downloadCsv, downloadPdfReport, formatCurrency } from '../utils/formatters';
 import { MonthlyAnalyticsCharts } from './MonthlyAnalyticsCharts';
+import { KpiTargetComparison } from './KpiTargetComparison';
 
 interface DashboardOverviewProps {
   data: SimpiDataSnapshot;
@@ -27,6 +29,7 @@ interface DashboardOverviewProps {
   searchQuery: string;
   onNavigate: (section: NavSection) => void;
   onAdvanceStage: (caseId: string, nextStage: RitualStage) => Promise<void>;
+  onUpdateKpiTargets: (next: Omit<KpiTargets, 'updatedAt'>) => Promise<void>;
 }
 
 const STAGE_ORDER: RitualStage[] = [
@@ -54,6 +57,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
   searchQuery,
   onNavigate,
   onAdvanceStage,
+  onUpdateKpiTargets,
 }) => {
   const t = TRANSLATIONS[language];
 
@@ -259,6 +263,17 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
         plots={data.plots}
         transactions={data.transactions}
         currency={currency}
+      />
+
+      {/* Monthly KPI Target Setting & Actual vs Target Recharts Comparison */}
+      <KpiTargetComparison
+        cases={data.cases}
+        plots={data.plots}
+        transactions={data.transactions}
+        notifications={data.notifications}
+        currency={currency}
+        targets={data.kpiTargets}
+        onSaveTargets={onUpdateKpiTargets}
       />
 
       {/* Main Analytics Split + Memorial Park Context */}

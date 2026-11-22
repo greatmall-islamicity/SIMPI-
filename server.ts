@@ -14,6 +14,7 @@ import {
   type NotificationLog,
   type AuditLogEntry,
   type ChatMessage,
+  type KpiTargets,
 } from './src/types/simpi.ts';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -546,6 +547,8 @@ function createSeedData(): SimpiDataSnapshot {
     },
   ];
 
+  const kpiTargets = createDefaultKpiTargets();
+
   return {
     plots,
     cases,
@@ -557,6 +560,17 @@ function createSeedData(): SimpiDataSnapshot {
     auditLogs,
     chatMessages,
     apiKeys,
+    kpiTargets,
+  };
+}
+
+function createDefaultKpiTargets(): KpiTargets {
+  return {
+    monthlyBurialTarget: 30,
+    monthlyBookingTarget: 26,
+    serviceEfficiencyTargetPct: 95,
+    monthlyRevenueTargetIdr: 165000000,
+    updatedAt: '2026-11-19 08:00 WIB',
   };
 }
 
@@ -564,7 +578,12 @@ function loadDatabase(): SimpiDataSnapshot {
   try {
     if (fs.existsSync(DATA_FILE)) {
       const raw = fs.readFileSync(DATA_FILE, 'utf-8');
-      return JSON.parse(raw) as SimpiDataSnapshot;
+      const parsed = JSON.parse(raw) as SimpiDataSnapshot;
+      if (!parsed.kpiTargets) {
+        parsed.kpiTargets = createDefaultKpiTargets();
+        fs.writeFileSync(DATA_FILE, JSON.stringify(parsed, null, 2));
+      }
+      return parsed;
     }
   } catch (err) {
     console.error('Failed to read persisted data, re-seeding:', err);
@@ -963,6 +982,36 @@ async function startServer() {
     addAudit('Ir. Ahmad Fauzan, M.M.', 'SUPER_ADMIN', `Penerbitan API Key Pihak Ketiga`, newKey.id);
     saveDatabase();
     res.status(201).json(newKey);
+  });
+
+  app.put('/api/v1/kpi-targets', (req, res) => {
+    const body = req.body as Partial<KpiTargets>;
+    const monthlyBurialTarget = Math.max(1, Math.min(500, Math.round(Number(body.monthlyBurialTarget) || db.kpiTargets.monthlyBurialTarget)));
+    const monthlyBookingTarget = Math.max(1, Math.min(500, Math.round(Number(body.monthlyBookingTarget) || db.kpiTargets.monthlyBookingTarget)));
+    const serviceEfficiencyTargetPct = Math.max(50, Math.min(100, Number((Number(body.serviceEfficiencyTargetPct) || db.kpiTargets.serviceEfficiencyTargetPct).toFixed(1))));
+    const monthlyRevenueTargetIdr = Math.max(1000000, Math.round(Number(body.monthlyRevenueTargetIdr) || db.kpiTargets.monthlyRevenueTargetIdr));
+
+    const updated: KpiTargets = {
+      monthlyBurialTarget,
+      monthlyBookingTarget,
+      serviceEfficiencyTargetPct,
+      monthlyRevenueTargetIdr,
+      updatedAt:
+        new Date().toISOString().slice(0, 10) +
+        ' ' +
+        new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) +
+        ' WIB',
+    };
+
+    db.kpiTargets = updated;
+    addAudit(
+      'Ir. Ahmad Fauzan, M.M.',
+      'SUPER_ADMIN',
+      `Pembaruan Target KPI Bulanan (${monthlyBurialTarget} pemakaman, efisiensi ${serviceEfficiencyTargetPct}%)`,
+      'KPI-TARGETS'
+    );
+    saveDatabase();
+    res.json(updated);
   });
 
   app.post('/api/v1/audit/export', (req, res) => {
