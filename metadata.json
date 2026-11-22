@@ -1,0 +1,8 @@
+{
+  "name": "SIMPI — Sistem Informasi Manajemen Pemakaman dan Pemulasaran Islamicity",
+  "description": "Platform infrastruktur digital terintegrasi untuk manajemen pemakaman berbasis GIS, pemulasaran jenazah sesuai syariah, inventaris, keuangan multi-mata uang, dan pelaporan keluarga duka secara real-time.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
